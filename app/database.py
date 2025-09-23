@@ -29,3 +29,6 @@ def get_db():
         yield db
     finally:
         db.close()
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+print(f"[database] Connected to: {DB_NAME}")  # Debugging line to confirm connection details
