@@ -17,3 +17,10 @@ def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_
 @router.get("/", response_model=list[schemas.CustomerResponse])
 def read_customers(db: Session = Depends(get_db)):
     return db.query(models.Customer).all()
+
+@router.get("/{customer_id}", response_model=schemas.CustomerResponse)
+def read_customer(customer_id: int, db: Session = Depends(get_db)):
+    customer = db.query(models.Customer).filter(models.Customer.customer_id == customer_id).first()
+    if not customer:
+        return {"error": "Customer not found"}
+    return customer
