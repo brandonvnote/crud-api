@@ -27,3 +27,22 @@ def test_read_customers(client):
     assert isinstance(data, list)
     assert len(data) == 1
     assert data[0]["first_name"] == "Bob"
+
+def test_read_customer_by_id(client):
+    # Arrange: create a customer
+    create_response = client.post("/customers/", json={
+        "first_name": "Charlie",
+        "last_name": "Brown",
+        "email": "charlie@example.com"
+    })
+    created = create_response.json()
+    customer_id = created["customer_id"]
+
+    # Act: fetch the customer by ID
+    response = client.get(f"/customers/{customer_id}")
+    
+    # Assert
+    assert response.status_code == 200
+    data = response.json()
+    assert data["first_name"] == "Charlie"
+    assert data["customer_id"] == customer_id
