@@ -96,3 +96,13 @@ def test_update_customer(client):
     data = response.json()
     assert data["first_name"] == "DanaUpdated"
     assert data["email"] == "dana.updated@example.com"
+
+def test_update_customer_not_found(client):
+    response = client.put("/customers/9999", json={
+        "first_name": "Ghost",
+        "last_name": "User",
+        "email": "ghost@example.com"
+    })
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "Customer not found"
