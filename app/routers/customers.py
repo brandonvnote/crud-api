@@ -30,3 +30,17 @@ def read_customer(customer_id: int, db: Session = Depends(get_db)):
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
     return customer
+
+@router.put("/{customer_id}", response_model=schemas.CustomerResponse)
+def update_customer(customer_id: int, update: schemas.CustomerUpdate, db: Session = Depends(get_db)):
+    customer = db.query(models.Customer).filter(models.Customer.customer_id == customer_id).first()
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+
+    # update only provided fields
+    for field, value in update.model_dump(exclude_unset=True).items():
+        setattr(customer, field, value)
+
+    db.commit()
+    db.refresh(customer)
+    return customer
