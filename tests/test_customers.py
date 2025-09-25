@@ -52,3 +52,24 @@ def test_read_customer_not_found(client):
     assert response.status_code == 404
     data = response.json()
     assert data["detail"] == "Customer not found"
+
+def test_count_customers(client):
+    # Arrange: create two customers
+    client.post("/customers/", json={
+        "first_name": "Alice",
+        "last_name": "Smith",
+        "email": "alice_count@example.com"
+    })
+    client.post("/customers/", json={
+        "first_name": "Bob",
+        "last_name": "Jones",
+        "email": "bob_count@example.com"
+    })
+
+    # Act
+    response = client.get("/customers/count")
+
+    # Assert
+    assert response.status_code == 200
+    data = response.json()
+    assert data["count"] == 2

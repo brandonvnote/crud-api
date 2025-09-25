@@ -19,6 +19,11 @@ def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_
 def read_customers(db: Session = Depends(get_db)):
     return db.query(models.Customer).all()
 
+@router.get("/count")
+def count_customers(db: Session = Depends(get_db)):
+    total = db.query(models.Customer).count()
+    return {"count": total}
+
 @router.get("/{customer_id}", response_model=schemas.CustomerResponse)
 def read_customer(customer_id: int, db: Session = Depends(get_db)):
     customer = db.query(models.Customer).filter(models.Customer.customer_id == customer_id).first()
