@@ -46,3 +46,9 @@ def test_read_customer_by_id(client):
     data = response.json()
     assert data["first_name"] == "Charlie"
     assert data["customer_id"] == customer_id
+
+def test_read_customer_not_found(client):
+    response = client.get("/customers/9999")  # ID that doesn't exist
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "Customer not found"

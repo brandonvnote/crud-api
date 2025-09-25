@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from .. import models, schemas
 from ..database import get_db
+from fastapi import HTTPException
 
 router = APIRouter(prefix="/customers", tags=["customers"])
 
@@ -22,5 +23,5 @@ def read_customers(db: Session = Depends(get_db)):
 def read_customer(customer_id: int, db: Session = Depends(get_db)):
     customer = db.query(models.Customer).filter(models.Customer.customer_id == customer_id).first()
     if not customer:
-        return {"error": "Customer not found"}
+        raise HTTPException(status_code=404, detail="Customer not found")
     return customer
