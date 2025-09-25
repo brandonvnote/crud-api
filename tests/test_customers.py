@@ -126,3 +126,9 @@ def test_delete_customer(client):
     # Verify: customer is gone
     get_response = client.get(f"/customers/{customer_id}")
     assert get_response.status_code == 404
+
+def test_delete_customer_not_found(client):
+    response = client.delete("/customers/9999")  # an ID that won’t exist
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "Customer not found"
