@@ -73,3 +73,26 @@ def test_count_customers(client):
     assert response.status_code == 200
     data = response.json()
     assert data["count"] == 2
+
+def test_update_customer(client):
+    # Arrange: create a customer
+    create_response = client.post("/customers/", json={
+        "first_name": "Dana",
+        "last_name": "White",
+        "email": "dana@example.com"
+    })
+    created = create_response.json()
+    customer_id = created["customer_id"]
+
+    # Act: update the customer
+    response = client.put(f"/customers/{customer_id}", json={
+        "first_name": "DanaUpdated",
+        "last_name": "White",
+        "email": "dana.updated@example.com"
+    })
+
+    # Assert
+    assert response.status_code == 200
+    data = response.json()
+    assert data["first_name"] == "DanaUpdated"
+    assert data["email"] == "dana.updated@example.com"
