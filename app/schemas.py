@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from typing import Optional, List
+from datetime import datetime
 
 class CustomerCreate(BaseModel):
     first_name: str
@@ -32,4 +33,23 @@ class ProductUpdate(BaseModel):
 
 class ProductResponse(ProductCreate):
     product_id: int
+    model_config = ConfigDict(from_attributes=True)
+
+class OrderItemCreate(BaseModel):
+    product_id: int
+    quantity: int
+
+class OrderCreate(BaseModel):
+    customer_id: int
+    items: List[OrderItemCreate]
+
+class OrderItemResponse(OrderItemCreate):
+    product_id: int
+
+class OrderResponse(BaseModel):
+    order_id: int
+    customer_id: int
+    order_date: datetime
+    items: List[OrderItemResponse]
+
     model_config = ConfigDict(from_attributes=True)
