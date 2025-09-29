@@ -49,12 +49,15 @@ def test_read_customer_by_id(client):
 
 def test_read_customer_not_found(client):
     response = client.get("/customers/9999")  # ID that doesn't exist
+    print(response.json())
     assert response.status_code == 404
-    data = response.json()
-    assert data["detail"] == "Customer not found"
+    error = response.json()["detail"]
+    assert error["code"] == 404
+    assert error["message"] == "Customer not found"
+    assert error["resource"] == "Customer"
 
 def test_count_customers(client):
-    # Arrange: create two customers
+    
     client.post("/customers/", json={
         "first_name": "Alice",
         "last_name": "Smith",
@@ -66,16 +69,16 @@ def test_count_customers(client):
         "email": "bob_count@example.com"
     })
 
-    # Act
+    
     response = client.get("/customers/count")
 
-    # Assert
+    
     assert response.status_code == 200
     data = response.json()
     assert data["count"] == 2
 
 def test_update_customer(client):
-    # Arrange: create a customer
+    
     create_response = client.post("/customers/", json={
         "first_name": "Dana",
         "last_name": "White",
@@ -84,14 +87,14 @@ def test_update_customer(client):
     created = create_response.json()
     customer_id = created["customer_id"]
 
-    # Act: update the customer
+    
     response = client.put(f"/customers/{customer_id}", json={
         "first_name": "DanaUpdated",
         "last_name": "White",
         "email": "dana.updated@example.com"
     })
 
-    # Assert
+    
     assert response.status_code == 200
     data = response.json()
     assert data["first_name"] == "DanaUpdated"
@@ -104,11 +107,13 @@ def test_update_customer_not_found(client):
         "email": "ghost@example.com"
     })
     assert response.status_code == 404
-    data = response.json()
-    assert data["detail"] == "Customer not found"
+    data = response.json()["detail"]
+    assert data["code"] == 404
+    assert data["message"] == "Customer not found"
+    assert data["resource"] == "Customer"
 
 def test_delete_customer(client):
-    # Arrange: create a customer
+    
     create_response = client.post("/customers/", json={
         "first_name": "Eve",
         "last_name": "Stone",
@@ -117,18 +122,20 @@ def test_delete_customer(client):
     created = create_response.json()
     customer_id = created["customer_id"]
 
-    # Act: delete the customer
+    
     response = client.delete(f"/customers/{customer_id}")
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "Customer deleted"
 
-    # Verify: customer is gone
+    
     get_response = client.get(f"/customers/{customer_id}")
     assert get_response.status_code == 404
 
 def test_delete_customer_not_found(client):
     response = client.delete("/customers/9999")  # an ID that won’t exist
     assert response.status_code == 404
-    data = response.json()
-    assert data["detail"] == "Customer not found"
+    data = response.json()["detail"]
+    assert data["code"] == 404
+    assert data["message"] == "Customer not found"
+    assert data["resource"] == "Customer"
