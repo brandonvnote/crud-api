@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, List
 from datetime import datetime
 
@@ -53,3 +53,20 @@ class OrderResponse(BaseModel):
     items: List[OrderItemResponse]
 
     model_config = ConfigDict(from_attributes=True)
+
+class ReviewBase(BaseModel):
+    customer_id: int
+    product_id: int
+    rating: int = Field(..., ge=1, le=5)
+
+class ReviewCreate(ReviewBase):
+    pass
+
+class ReviewUpdate(BaseModel):
+    rating: Optional[int] = Field(None, ge=1, le=5)
+
+class ReviewResponse(ReviewBase):
+    review_id: int
+    order_date: datetime
+    model_config = ConfigDict(from_attributes=True)
+
