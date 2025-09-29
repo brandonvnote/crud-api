@@ -70,3 +70,25 @@ class ReviewResponse(ReviewBase):
     order_date: datetime
     model_config = ConfigDict(from_attributes=True)
 
+class ShipmentBase(BaseModel):
+    order_id: int
+    status: str = "processing"
+    tracking_number: Optional[str] = None
+    shipped_at: Optional[datetime] = None
+
+
+class ShipmentCreate(ShipmentBase):
+    pass
+
+
+class ShipmentUpdate(BaseModel):
+    status: Optional[str] = None
+    tracking_number: Optional[str] = None
+    shipped_at: Optional[datetime] = None
+
+
+class ShipmentResponse(ShipmentBase):
+    shipment_id: int
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)

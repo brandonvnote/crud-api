@@ -32,6 +32,7 @@ class Order(Base):
     order_date = Column(DateTime, default=lambda: datetime.now(timezone.utc), server_default=func.now())
 
     items = relationship("OrderItem", back_populates="order")
+    shipment = relationship("Shipment", back_populates="order", uselist=False)
 
 class OrderItem(Base):
     __tablename__ = "order_items"
@@ -55,3 +56,19 @@ class Review(Base):
     
     customer = relationship("Customer", back_populates="reviews")
     product = relationship("Product", back_populates="reviews")
+
+class Shipment(Base):
+    __tablename__ = "shipments"
+
+    shipment_id = Column(Integer, primary_key=True, index=True)
+    order_id = Column(Integer, ForeignKey("orders.order_id"), nullable=False, unique=True)
+    status = Column(String, default="processing")
+    tracking_number = Column(String, unique=True, nullable=True)
+    shipped_at = Column(DateTime, nullable=True)
+    created_at = Column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        server_default=func.now()
+    )
+
+    order = relationship("Order", back_populates="shipment")
