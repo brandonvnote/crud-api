@@ -13,5 +13,9 @@ class CustomerUpdate(BaseModel):
 
 class CustomerResponse(CustomerCreate):
     customer_id: int
+    model_config = ConfigDict(from_attributes=True)
 
-model_config = ConfigDict(from_attributes=True)
+class ErrorResponse(BaseModel):
+    code: int
+    message: str
+    resource: str
