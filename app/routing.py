@@ -1,3 +1,4 @@
+from dbm import error
 from fastapi import APIRouter, HTTPException
 
 from app.schemas import ErrorResponse
