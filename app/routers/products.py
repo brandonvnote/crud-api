@@ -13,3 +13,48 @@ def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db)
     db.commit()
     db.refresh(new_product)
     return new_product
+
+@router.get("/", response_model=list[schemas.ProductResponse])
+def read_products(db: Session = Depends(get_db)):
+    return db.query(models.Product).all()
+
+@router.get(
+    "/{product_id}",
+    response_model=schemas.ProductResponse,
+    responses={404: {"model": schemas.ErrorResponse}}
+)
+def read_product(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(models.Product).filter(models.Product.product_id == product_id).first()
+    if not product:
+        not_found("Product")
+    return product
+
+@router.put(
+    "/{product_id}",
+    response_model=schemas.ProductResponse,
+    responses={404: {"model": schemas.ErrorResponse}}
+)
+def update_product(product_id: int, update: schemas.ProductUpdate, db: Session = Depends(get_db)):
+    product = db.query(models.Product).filter(models.Product.product_id == product_id).first()
+    if not product:
+        not_found("Product")
+
+    for field, value in update.model_dump(exclude_unset=True).items():
+        setattr(product, field, value)
+
+    db.commit()
+    db.refresh(product)
+    return product
+
+@router.delete(
+    "/{product_id}",
+    responses={404: {"model": schemas.ErrorResponse}}
+)
+def delete_product(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(models.Product).filter(models.Product.product_id == product_id).first()
+    if not product:
+        not_found("Product")
+
+    db.delete(product)
+    db.commit()
+    return {"message": "Product deleted"}
