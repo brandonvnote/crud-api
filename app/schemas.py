@@ -19,3 +19,17 @@ class ErrorResponse(BaseModel):
     code: int
     message: str
     resource: str
+
+class ProductCreate(BaseModel):
+    name: str
+    category: Optional[str] = None
+    price: float
+
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    category: Optional[str] = None
+    price: Optional[float] = None
+
+class ProductResponse(ProductCreate):
+    product_id: int
+    model_config = ConfigDict(from_attributes=True)
