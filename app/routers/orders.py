@@ -8,12 +8,19 @@ router = create_router("/orders", "orders")
 
 @router.post("/", response_model=schemas.OrderResponse)
 def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
-    # Create order
+    """Create a new order with items.
+
+    Args:
+        order (schemas.OrderCreate): The order data to create.
+        db (Session, optional): The database session. Defaults to Depends(get_db).
+
+    Returns:
+        _type_: The created order.
+    """
     new_order = models.Order(customer_id=order.customer_id)
     db.add(new_order)
-    db.flush()  # get order_id before commit
+    db.flush()
 
-    # Add items
     for item in order.items:
         db.add(models.OrderItem(order_id=new_order.order_id, product_id=item.product_id, quantity=item.quantity))
 
@@ -23,6 +30,14 @@ def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=list[schemas.OrderResponse])
 def read_orders(db: Session = Depends(get_db)):
+    """Get all orders.
+
+    Args:
+        db (Session, optional): The database session. Defaults to Depends(get_db).
+
+    Returns:
+        _type_: The list of all orders.
+    """
     return db.query(models.Order).all()
 
 @router.get(
@@ -31,6 +46,15 @@ def read_orders(db: Session = Depends(get_db)):
     responses={404: {"model": schemas.ErrorResponse}}
 )
 def read_order(order_id: int, db: Session = Depends(get_db)):
+    """Get an order by ID.
+
+    Args:
+        order_id (int): The ID of the order to retrieve.
+        db (Session, optional): The database session. Defaults to Depends(get_db).
+
+    Returns:
+        _type_: The order with the specified ID.
+    """
     order = db.query(models.Order).filter(models.Order.order_id == order_id).first()
     if not order:
         not_found("Order")
@@ -42,6 +66,16 @@ def read_order(order_id: int, db: Session = Depends(get_db)):
     responses={404: {"model": schemas.ErrorResponse}}
 )
 def update_order(order_id: int, update: schemas.OrderUpdate, db: Session = Depends(get_db)):
+    """Update an order's status by ID.
+
+    Args:
+        order_id (int): The ID of the order to update.
+        update (schemas.OrderUpdate): The updated order data.
+        db (Session, optional): The database session. Defaults to Depends(get_db).
+
+    Returns:
+        _type_: The updated order.
+    """
     order = db.query(models.Order).filter(models.Order.order_id == order_id).first()
     if not order:
         not_found("Order")
@@ -56,6 +90,15 @@ def update_order(order_id: int, update: schemas.OrderUpdate, db: Session = Depen
     responses={404: {"model": schemas.ErrorResponse}}
 )
 def delete_order(order_id: int, db: Session = Depends(get_db)):
+    """Delete an order by ID.
+
+    Args:
+        order_id (int): The ID of the order to delete.
+        db (Session, optional): The database session. Defaults to Depends(get_db).
+
+    Returns:
+        _type_: A message indicating successful deletion.
+    """
     order = db.query(models.Order).filter(models.Order.order_id == order_id).first()
     if not order:
         not_found("Order")
