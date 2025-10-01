@@ -1,3 +1,5 @@
+from fastapi.testclient import TestClient
+
 def test_create_product(client):
     """Test creating a new product.
 
