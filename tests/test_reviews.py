@@ -1,7 +1,13 @@
 import pytest
 
 def test_create_review(client):
-    # Arrange: create customer + product first
+    """Test creating a new review.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: The created review.
+    """
     customer = client.post("/customers/", json={
         "first_name": "ReviewUser",
         "last_name": "Test",
@@ -14,14 +20,12 @@ def test_create_review(client):
         "price": 1299.99
     }).json()
 
-    # Act
     response = client.post("/reviews/", json={
         "customer_id": customer["customer_id"],
         "product_id": product["product_id"],
         "rating": 5
     })
 
-    # Assert
     assert response.status_code == 200
     data = response.json()
     assert data["rating"] == 5
@@ -30,13 +34,26 @@ def test_create_review(client):
 
 
 def test_read_reviews(client):
+    """Test reading all reviews.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: List of reviews.
+    """
     response = client.get("/reviews/")
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
 def test_read_review_by_id(client):
-    # Arrange: create review
+    """Test reading a review by ID.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: The review with the specified ID.
+    """
     customer = client.post("/customers/", json={
         "first_name": "SingleReview",
         "last_name": "User",
@@ -55,21 +72,32 @@ def test_read_review_by_id(client):
         "rating": 4
     }).json()
 
-    # Act
     response = client.get(f"/reviews/{review['review_id']}")
 
-    # Assert
     assert response.status_code == 200
     assert response.json()["review_id"] == review["review_id"]
 
 
 def test_read_review_not_found(client):
+    """Test reading a review that does not exist.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: Error response indicating review not found.
+    """
     response = client.get("/reviews/9999")
     assert response.status_code == 404
 
 
 def test_update_review(client):
-    # Arrange: create review
+    """Test updating an existing review.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: The updated review.
+    """
     customer = client.post("/customers/", json={
         "first_name": "UpdateReview",
         "last_name": "User",
@@ -88,21 +116,32 @@ def test_update_review(client):
         "rating": 2
     }).json()
 
-    # Act: update rating
     response = client.put(f"/reviews/{review['review_id']}", json={"rating": 5})
 
-    # Assert
     assert response.status_code == 200
     assert response.json()["rating"] == 5
 
 
 def test_update_review_not_found(client):
+    """Test updating a review that does not exist.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: Error response indicating review not found.
+    """
     response = client.put("/reviews/9999", json={"rating": 3})
     assert response.status_code == 404
 
 
 def test_delete_review(client):
-    # Arrange: create review
+    """Test deleting an existing review.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: A message indicating successful deletion.
+    """
     customer = client.post("/customers/", json={
         "first_name": "DeleteReview",
         "last_name": "User",
@@ -121,14 +160,18 @@ def test_delete_review(client):
         "rating": 3
     }).json()
 
-    # Act
     response = client.delete(f"/reviews/{review['review_id']}")
 
-    # Assert
     assert response.status_code == 200
     assert "deleted successfully" in response.json()["message"]
 
-
 def test_delete_review_not_found(client):
+    """Test deleting a review that does not exist.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: Error response indicating review not found.
+    """
     response = client.delete("/reviews/9999")
     assert response.status_code == 404
