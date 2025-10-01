@@ -1,6 +1,5 @@
 import pytest
 
-
 def test_create_shipment(client):
     customer = client.post("/customers/", json={
         "first_name": "ShipUser",
