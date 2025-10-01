@@ -45,14 +45,20 @@ class OrderCreate(BaseModel):
 
 class OrderItemResponse(OrderItemCreate):
     product_id: int
+    quantity: int
+    model_config = ConfigDict(from_attributes=True)
 
 class OrderResponse(BaseModel):
     order_id: int
     customer_id: int
+    status: str
     order_date: datetime
     items: List[OrderItemResponse]
 
     model_config = ConfigDict(from_attributes=True)
+
+class OrderUpdate(BaseModel):
+    status: str
 
 class ReviewBase(BaseModel):
     customer_id: int
