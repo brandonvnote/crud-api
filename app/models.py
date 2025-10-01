@@ -33,6 +33,7 @@ class Order(Base):
 
     items = relationship("OrderItem", back_populates="order")
     shipment = relationship("Shipment", back_populates="order", uselist=False)
+    items = relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")
 
 class OrderItem(Base):
     __tablename__ = "order_items"
