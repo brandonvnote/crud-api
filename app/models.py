@@ -6,6 +6,13 @@ from sqlalchemy.sql import func
 
 
 class Customer(Base):
+    """Customer model for the database.
+
+    Args:
+        Base (_type_): The base class for SQLAlchemy models.
+    Returns:
+        _type_: The Customer model.
+    """
     __tablename__ = "customers"
 
     customer_id = Column(Integer, primary_key=True, index=True)
@@ -15,6 +22,13 @@ class Customer(Base):
     reviews = relationship("Review", back_populates="customer")
 
 class Product(Base):
+    """Product model for the database.
+
+    Args:
+        Base (_type_): The base class for SQLAlchemy models.
+    Returns:
+        _type_: The Product model.
+    """
     __tablename__ = "products"
 
     product_id = Column(Integer, primary_key=True, index=True)
@@ -24,6 +38,13 @@ class Product(Base):
     reviews = relationship("Review", back_populates="product")
 
 class Order(Base):
+    """Order model for the database.
+
+    Args:
+        Base (_type_): The base class for SQLAlchemy models.
+    Returns:
+        _type_: The Order model.
+    """
     __tablename__ = "orders"
 
     order_id = Column(Integer, primary_key=True, index=True)
@@ -36,6 +57,13 @@ class Order(Base):
     items = relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")
 
 class OrderItem(Base):
+    """Order item model for the database.
+
+    Args:
+        Base (_type_): The base class for SQLAlchemy models.
+    Returns:
+        _type_: The OrderItem model.
+    """
     __tablename__ = "order_items"
 
     order_id = Column(Integer, ForeignKey("orders.order_id"), primary_key=True)
@@ -46,6 +74,13 @@ class OrderItem(Base):
     product = relationship("Product")
 
 class Review(Base):
+    """Review model for the database.
+
+    Args:
+        Base (_type_): The base class for SQLAlchemy models.
+    Returns:
+        _type_: The Review model.
+    """
     __tablename__ = "reviews"
 
     review_id = Column(Integer, primary_key=True, index=True)
@@ -59,6 +94,13 @@ class Review(Base):
     product = relationship("Product", back_populates="reviews")
 
 class Shipment(Base):
+    """Shipment model for the database.
+
+    Args:
+        Base (_type_): The base class for SQLAlchemy models.
+    Returns:
+        _type_: The Shipment model.
+    """
     __tablename__ = "shipments"
 
     shipment_id = Column(Integer, primary_key=True, index=True)
