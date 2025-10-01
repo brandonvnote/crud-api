@@ -1,4 +1,11 @@
 def test_create_product(client):
+    """Test creating a new product.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: The created product.
+    """
     response = client.post("/products/", json={
         "name": "Laptop",
         "category": "Electronics",
@@ -10,6 +17,13 @@ def test_create_product(client):
     assert "product_id" in data
 
 def test_read_products(client):
+    """Test reading all products.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: List of products.
+    """
     
     client.post("/products/", json={
         "name": "Phone",
@@ -17,10 +31,8 @@ def test_read_products(client):
         "price": 599.99
     })
 
-    
     response = client.get("/products/")
 
-    
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
@@ -28,7 +40,14 @@ def test_read_products(client):
     assert data[0]["name"] == "Phone"
 
 def test_read_product_by_id(client):
-    
+    """Test reading a product by ID.
+
+    Args:
+        client (TestClient): The test client for making requests.
+
+    Returns:
+        _type_: The product with the specified ID.
+    """
     create_response = client.post("/products/", json={
         "name": "Tablet",
         "category": "Electronics",
@@ -37,17 +56,21 @@ def test_read_product_by_id(client):
     created = create_response.json()
     product_id = created["product_id"]
 
-    
     response = client.get(f"/products/{product_id}")
 
-    
     assert response.status_code == 200
     data = response.json()
     assert data["name"] == "Tablet"
     assert data["product_id"] == product_id
 
-
 def test_read_product_not_found(client):
+    """Test reading a product that does not exist.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: Error response indicating product not found.
+    """
     response = client.get("/products/9999")
     assert response.status_code == 404
     error = response.json()["detail"]
@@ -56,7 +79,13 @@ def test_read_product_not_found(client):
     assert error["resource"] == "Product"
 
 def test_update_product(client):
-    
+    """Test updating an existing product.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: The updated product.
+    """
     create_response = client.post("/products/", json={
         "name": "Monitor",
         "category": "Electronics",
@@ -64,21 +93,25 @@ def test_update_product(client):
     })
     created = create_response.json()
     product_id = created["product_id"]
-
     
     response = client.put(f"/products/{product_id}", json={
         "name": "Monitor Updated",
         "price": 179.99
     })
 
-    
     assert response.status_code == 200
     data = response.json()
     assert data["name"] == "Monitor Updated"
     assert data["price"] == 179.99
 
-
 def test_update_product_not_found(client):
+    """Test updating a product that does not exist.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: Error response indicating product not found.
+    """
     response = client.put("/products/9999", json={"name": "Ghost"})
     assert response.status_code == 404
     error = response.json()["detail"]
@@ -87,7 +120,13 @@ def test_update_product_not_found(client):
     assert error["resource"] == "Product"
 
 def test_delete_product(client):
-    # Arrange
+    """Test deleting an existing product.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: A message indicating successful deletion.
+    """
     create_response = client.post("/products/", json={
         "name": "Keyboard",
         "category": "Accessories",
@@ -96,19 +135,22 @@ def test_delete_product(client):
     created = create_response.json()
     product_id = created["product_id"]
 
-    # Act
     response = client.delete(f"/products/{product_id}")
 
-    # Assert
     assert response.status_code == 200
     assert response.json()["message"] == "Product deleted"
 
-    # Verify it’s gone
     get_response = client.get(f"/products/{product_id}")
     assert get_response.status_code == 404
 
-
 def test_delete_product_not_found(client):
+    """Test deleting a product that does not exist.
+
+    Args:
+        client (TestClient): The test client for making requests.
+    Returns:
+        _type_: Error response indicating product not found.
+    """
     response = client.delete("/products/9999")
     assert response.status_code == 404
     error = response.json()["detail"]
