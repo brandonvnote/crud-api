@@ -20,3 +20,46 @@ def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_order)
     return new_order
+
+@router.get("/", response_model=list[schemas.OrderResponse])
+def read_orders(db: Session = Depends(get_db)):
+    return db.query(models.Order).all()
+
+@router.get(
+    "/{order_id}",
+    response_model=schemas.OrderResponse,
+    responses={404: {"model": schemas.ErrorResponse}}
+)
+def read_order(order_id: int, db: Session = Depends(get_db)):
+    order = db.query(models.Order).filter(models.Order.order_id == order_id).first()
+    if not order:
+        not_found("Order")
+    return order
+
+@router.put(
+    "/{order_id}",
+    response_model=schemas.OrderResponse,
+    responses={404: {"model": schemas.ErrorResponse}}
+)
+def update_order(order_id: int, update: schemas.OrderUpdate, db: Session = Depends(get_db)):
+    order = db.query(models.Order).filter(models.Order.order_id == order_id).first()
+    if not order:
+        not_found("Order")
+
+    order.status = update.status
+    db.commit()
+    db.refresh(order)
+    return order
+
+@router.delete(
+    "/{order_id}",
+    responses={404: {"model": schemas.ErrorResponse}}
+)
+def delete_order(order_id: int, db: Session = Depends(get_db)):
+    order = db.query(models.Order).filter(models.Order.order_id == order_id).first()
+    if not order:
+        not_found("Order")
+
+    db.delete(order)
+    db.commit()
+    return {"message": "Order deleted"}
