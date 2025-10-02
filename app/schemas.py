@@ -164,7 +164,9 @@ class ReviewCreate(ReviewBase):
     Returns:
         _type_: The review creation schema.
     """
-    pass
+    product_id: int
+    rating: int = Field(..., ge=1, le=5)
+    
 
 class ReviewUpdate(BaseModel):
     """Review update schema.
@@ -238,3 +240,36 @@ class ShipmentResponse(ShipmentBase):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+class TopProduct(BaseModel):
+    product_id: int
+    name: str
+    quantity_sold: int
+
+class RevenueByMonth(BaseModel):
+    month: str 
+    orders: int
+    revenue: float
+
+class RevenueByCustomer(BaseModel):
+    customer_id: int
+    first_name: str
+    last_name: str
+    revenue: float
+
+class RepeatCustomer(BaseModel):
+    customer_id: int
+    first_name: str
+    last_name: str
+    orders: int
+
+class OrderValueStats(BaseModel):
+    avg_value: float
+    min_value: float
+    max_value: float
+
+class ProductRating(BaseModel):
+    product_id: int
+    name: str
+    avg_rating: float
+    reviews: int
