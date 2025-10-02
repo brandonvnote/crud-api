@@ -34,3 +34,29 @@ def client(db):
 
     app.dependency_overrides[get_db] = override_get_db
     return TestClient(app)
+
+def create_customer(client, i=1):
+    return client.post("/customers/", json={
+        "first_name": f"User{i}",
+        "last_name": "Test",
+        "email": f"user{i}@example.com"
+    }).json()
+
+def create_product(client, name, price, category="Test"):
+    return client.post("/products/", json={
+        "name": name,
+        "category": category,
+        "price": price
+    }).json()
+
+def create_order(client, customer_id, items):
+    return client.post("/orders/", json={
+        "customer_id": customer_id,
+        "items": items
+    }).json()
+
+def add_review(client, product_id, rating):
+    return client.post("/reviews/", json={
+        "product_id": product_id,
+        "rating": rating
+    }).json()
