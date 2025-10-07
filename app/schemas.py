@@ -157,15 +157,8 @@ class ReviewBase(BaseModel):
     rating: int = Field(..., ge=1, le=5)
 
 class ReviewCreate(ReviewBase):
-    """Review creation schema.
 
-    Args:
-        ReviewBase (_type_): Base review schema.
-    Returns:
-        _type_: The review creation schema.
-    """
-    product_id: int
-    rating: int = Field(..., ge=1, le=5)
+    pass
     
 
 class ReviewUpdate(BaseModel):
