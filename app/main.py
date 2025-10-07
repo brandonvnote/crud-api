@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.database import get_db
-from .routers import customers, products, orders, reviews, shipments
+from .routers import customers, products, orders, reviews, shipments, analytics
 
 app = FastAPI(title="CRUD API")
 
@@ -11,6 +11,7 @@ app.include_router(products.router)
 app.include_router(orders.router)
 app.include_router(reviews.router)
 app.include_router(shipments.router)
+app.include_router(analytics.router)
 
 @app.get("/")
 def root():
