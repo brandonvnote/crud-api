@@ -55,8 +55,9 @@ def create_order(client, customer_id, items):
         "items": items
     }).json()
 
-def add_review(client, product_id, rating):
+def add_review(client, customer_id, product_id, rating):
     return client.post("/reviews/", json={
+        "customer_id": customer_id,
         "product_id": product_id,
         "rating": rating
     }).json()
